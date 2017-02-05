@@ -125,6 +125,7 @@
 	:buffer "*helm-spotify*"))
 
 
+;;; Test version
 (defun helm-test ()
   (interactive)
   (helm :sources (helm-build-sync-source "test"
