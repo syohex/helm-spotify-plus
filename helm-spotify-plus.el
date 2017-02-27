@@ -4,7 +4,11 @@
 ;;; API Reference: https://developer.spotify.com/technologies/web-api/
 (require 'url)
 (require 'json)
+(setq json-encoding-pretty-print t)
+(prefer-coding-system 'utf-8)
 
+(setq coding-system-for-read 'utf-8)
+(setq coding-system-for-write 'utf-8)
 ;; installing helm - using use-package!
 (if 'use-package
     (progn 
@@ -15,6 +19,10 @@
         (helm-autoresize-mode 1)
         (setq helm-autoresize-max-height 30)
         (setq helm-autoresize-min-height 20))
+        (prefer-coding-system 'iso-8859-1)
+	(setq coding-system-for-read 'iso-8859-1)
+	(setq coding-system-for-write 'iso-8859-1)
+
       (use-package multi
         :ensure t))
   (message "You need to install Helm to make use of this module. Future releases will provide it"))
@@ -91,7 +99,9 @@
   (let ((response (with-current-buffer
 		   (url-retrieve-synchronously album-href)
 		   (goto-char url-http-end-of-headers)
-		   (json-read))))
+		   (json-read)))
+	)
+    ;;(pp response)
     (aref (alist-get '(tracks items) response) 0)))
 
 (defun spotify-play-album (track)
@@ -114,6 +124,7 @@
 
 (defun spotify-search-formatted-helper (search-term counter)
   (mapcar (lambda (track)
+	    ;;(pp track)
 	    (cons (spotify-format-track track) track))
 	  (alist-get '(tracks items) (spotify-artist-track-search search-term counter))))
 
@@ -188,6 +199,7 @@
 		   :init (setq search-string (get-search-string))
 		   :candidates
 		   (helm-spotify-search search-string)
+		   (revert-buffer-with-coding-system 'utf-8)
 		   :multiline t
 		   :action-transformer
 		   (lambda (actions track)
